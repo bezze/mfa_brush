@@ -5,6 +5,7 @@
       integer, intent(in) :: mode
       integer :: err_ov, i_ov, j_chain,ini_chain,i_col,i_row, n_col,n_row!, j_part!Add by Kevo to avoid overlap between grafting points
       real :: dis_ov_2, min_dis_2, a_br,a_br_2!sigma(1,1)**2 !Add by Kevo to avoid overlap between grafting points
+      real (kind=8) :: fi=0., alpha_ini=0.78
 !a_br = lattice parameter for brush grafting points
       min_dis_2 = sigma(1,1)**2 ! Sets overlap radius 
 !---  Specify position of first monomer in chain
@@ -512,5 +513,93 @@ case(6)  ! ------ Ordered Brush ONLY in bottom wall: DROPLET
         end do
     end do    
 
+case(7)  ! ------ Ordered Brush in bottom and top wall, starting with initial orientation
+! defined by 'alpha_ini' (angle between two consecutive beads and the top/bot wall) and
+! 'fi' (angle between the projection of two consecutive beads over top/bot wall and the x axis)
+
+!print*, "entro" !DEBUG
+
+    a_br = sqrt( 2 * boundary(1) * boundary(2) / n_chain ) !lattice parameter
+    a_br_2 = a_br / 2
+
+!Check parameter compatibility for ordered brush
+    n_col = nint(boundary(1)/a_br)
+    if(mod(boundary(1),a_br).ne.0.) then 
+        print*, "boundary(1), should be a multiple of the lattice parameter a_br"
+        print*, "boundary(1) = ",boundary(1),"a_br = ",a_br
+        print*,"boundary(1)/a_br = ", boundary(1)/a_br
+    end if
+
+    n_row = nint(boundary(2)/a_br)
+    if(mod(boundary(2),a_br).ne.0.) then
+       print*, "boundary(2), should be a multiple of the lattice parameter a_br"
+       print*, "boundary(2) = ",boundary(2),"a_br = ",a_br
+       print*,"boundary(2)/a_br = ", boundary(2)/a_br
+    end if
+    
+    if(n_chain.ne.2*n_col*n_row) then
+        print*,"ERROR: n_chain should be equal to 2*n_col*n_row"
+        print*,"n_chain: ",n_chain
+        print*,"2*n_col*n_row= ","2*",n_col,"*",n_row," = ", 2*n_col*n_row 
+        stop
+    end if
+
+!Set head positions
+do j_chain = 0, 1 !0 is top wall. 1 is for bottom wall
+    i_part =  j_chain * n_mon * n_chain / 2 ! starting particle to set it's location
+    do i_col = 0, n_col-1 !loop for columns
+        do i_row = 0, n_row-1 !loop for rows
+            i_part = i_part + 1
+            r0(1,i_part) = a_br_2 + a_br*i_col !set head ubication of top grafting point
+            r0(2,i_part) = a_br_2 + a_br*i_row 
+            if(i_part.le.n_mon*n_chain/2) then 
+                r0(3,i_part) = z_space_wall-z_head
+            else if(i_part.gt.n_mon*n_chain/2) then
+                r0(3,i_part) = z_head
+            end if
+!            print*,i_part,r0(:,i_part) ! DEBUG
+            !Set the remaining monomers in chain
+            do i_mon=2,n_mon
+                i_part = i_part + 1
+                do i_dim=1,3
+                    if(i_dim.lt.n_dim) then    !x and y                
+                        if(i_dim.eq.1) then    ! x
+                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*COS(fi)*COS(alpha_ini)  !bottom
+                        else                   ! y 
+                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(fi)*COS(alpha_ini) !bottom
+                        end if
+                        ! PBC in the plane          
+                        if(r0(i_dim,i_part).ge.boundary(i_dim)) then
+                            r0(i_dim,i_part) = r0(i_dim,i_part) - boundary(i_dim)
+                        else if(r0(i_dim,i_part).le.0.) then
+                            r0(i_dim,i_part) = r0(i_dim,i_part) + boundary(i_dim)
+                        end if
+                        !print*,"i_dim",i_dim,"n_dim",n_dim !DEBUG
+                    else if(i_dim.eq.n_dim) then !z
+                         !print*,"i_dim = ",n_dim ! DEBUG
+                         if(i_part.le.n_mon*n_chain/2) then  ! top wall
+                         !print*,"TOP WALL" !DEBUG
+#            if SOLVENT == 1 || SOLVENT == 2 
+                             r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(alpha_ini)
+#            elif SOLVENT == 0 || SOLVENT == 3
+                             r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(alpha_ini)
+#           endif       
+                         else if (i_part.gt.n_mon*n_chain/2) then !bottom wall    
+                        !print*, "BOTTOM WALL" !DEBUG
+#            if SOLVENT == 1 || SOLVENT == 2 
+                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+#            elif SOLVENT == 0 || SOLVENT == 3
+                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+#           endif                
+                         end if  ! end top or bottom 
+                    end if ! end x,y or z
+                end do ! end i_dim
+!                print*,i_part,r0(:,i_part) !DEBUG
+            end do  ! end rest of the chain          
+        end do !end i_row
+    end do ! end i_col
+end do ! end j_chain bottom or top wall
+
+!print*,"salio" !DEBUG
  end select
 end subroutine gen_brush

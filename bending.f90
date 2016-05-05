@@ -71,6 +71,9 @@ Do l=0,n_chain-1 !n_chain , loop over chains
             dir_prev=dir_prev/sqrt(dir_prev_2*r_prev_2)
         end if
         delta_alpha=acos(cos_alpha)-alpha_eq
+        if(cos_alpha.ge.1.0) then
+                delta_alpha=0.0-alpha_eq
+        end if
         F_mod=k_bend*delta_alpha
         v_bend=v_bend+.5*F_mod*delta_alpha
         Do j=1,3

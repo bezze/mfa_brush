@@ -35,9 +35,14 @@ use commons
 !            v(2,i_part) = v_half(2,i_part) + 0.5*dt*a(2,i_part)       ! old force(2,i_part)*inv_mass(i_part)
 !            v(3,i_part) = v_half(3,i_part) + 0.5*dt*a(3,i_part)       ! old force(3,i_part)*inv_mass(i_part)
             v(1,i_part) = v(1,i_part) + 0.5*dt*a(1,i_part)    
+#ifdef BIDIMENSIONAL
+            v(2,:) = 0.
+#else BIDIMENSIONAL
             v(2,i_part) = v(2,i_part) + 0.5*dt*a(2,i_part)    
+#endif
             v(3,i_part) = v(3,i_part) + 0.5*dt*a(3,i_part)    
         end do
+
 
 ! NOTE: if DPD_VV is defined the energies and temp are calculated afterwards in new_dpd_fd.f90
 #ifdef SHEARED

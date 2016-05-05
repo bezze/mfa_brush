@@ -128,6 +128,8 @@ subroutine conf_default()
             call gen_brush(1)
 #       elif BRUSH_TYPE ==2              /* Ordered Brush*/
             call gen_brush(5)   
+#       elif BRUSH_TYPE ==3              /* Ordered Brush, polymers aligned*/
+            call gen_brush(7)
 #       endif
 #   elif SYSTEM==1  /* Brush only in bottom wall: droplet */
 #       if BRUSH_TYPE ==1  /* Avoids overlp between grafting beads*/
@@ -236,9 +238,19 @@ subroutine conf_default()
           end do
       end do
 !
-! ---- Generate a first set of gaussian distributed velocities 
+! ---- Generate a first set of initial velocities 
 ! 
-         
+
+#if VEL_INIT == 0         
+        print *,"  * Setting initial velocities to ZERO "
+
+        do i_part = 1 , n_mon_tot
+            v(1,i_part)  = 0.0
+            v(2,i_part)  = 0.0 
+            v(3,i_part)  = 0.0
+        end do
+ 
+#elif VEL_INIT == 1         
         print *,"  *  Generating Maxwell-Boltzmann distributed initial velocity "
 
         do i_part = 1 , n_mon_tot
@@ -246,9 +258,11 @@ subroutine conf_default()
             v(2,i_part)  =  sqrt(temp/mass_type(a_type(i_part)))*rnor()
             v(3,i_part)  =  sqrt(temp/mass_type(a_type(i_part)))*rnor()
         end do 
+#endif
 
-        
-
+#ifdef BIDIMENSIONAL
+        v(2,:) = 0.0
+#endif
 
 #if WALL == 1 /* explicit wall*/
            rx_twall(:,2) = force_twall(:)/mass_twall *0.5*dt_2

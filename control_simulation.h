@@ -12,9 +12,10 @@
 /*BRUSH TYPE: sets how the grafted beads from the polymer brush will be chosen
  * 0: randomly distributed with a uniform distribution. Beads may overlap one another.
  * 1: randomly distributed with a uniform distribution. Overlaping beads are forbidden.
- * 2: ordered brush. The distance between neighbouring grafted beads is equal for all points*/
+ * 2: ordered brush. The distance between neighbouring grafted beads is equal for all points
+ * 3: ordered brush. As above, but with initial fixed orientations, i.e. 'combed'*/
 
-#define BRUSH_TYPE 0 
+#define BRUSH_TYPE 3 
 
 /* SYMMETRY */
 /* 0 = channel geometry: no PBC in Z; 
@@ -53,7 +54,7 @@
 
 /* Thermostat */
 
-#define THERMOSTAT 0 /*  1=LGV 0=DPD       */
+#define THERMOSTAT 1 /*  1=LGV 0=DPD       */
 
 #define DPD_WEIGHT 0 /*  0=usual choice of DPD weight: Wd=(1-r/rc)^2 ; 1= constant: Wr=Wd=1 ; 2 "quartic" */ 
                      /*  wd=(1-r/rc)^4                                                                    */  
@@ -62,6 +63,18 @@
 #undef DPD_VV       /* Adds a re-calculation of the Fd at the end of the iteration cycle. 
                      * Improves T=const ? Vattullainen JCP 116 2967 
                      * Good for soft potentials (not implemmented) */ 
+
+/*
+ *
+ * 	Definition  of initial conditions 
+ *
+*/
+#define BIDIMENSIONAL /* Constrains evolution in y direction making an effective 2D dynamics */
+
+#define VEL_INIT 0  /* VEL_INIT: particles starting velocities
+		     * 0 = velocities set to zero
+		     * 1 = gaussian distribution, in accordance with temperature (should be default)
+		     * */
 
 /*
 * Relaxation mechanisms when thermalizing new configurations 
@@ -80,7 +93,7 @@
 
 #define  STORE 0 /* 0=Writes out folded coordinates,1=writes out unfolded (to follow diffusion)   */
 #define  WR_FORCES 0 /* 0=Writes out sum of forces on brush heads,1=writes out individual forcen on brush heads  */
-#define  PROFILES      /* this uses mide for calculating profiles in the MD run.       */
+#undef  PROFILES      /* this uses mide for calculating profiles in the MD run.       */
 #undef DIFF /*ifdef, the program will calculate diffusion coefficients. Not implemmented for all the systems  */
 #undef BRUSH_SEP /* ifdef separates the density profiles of top and bottom brushes */                    
 #undef FLUKT /*write out observations of the forces between Particle 4 and 3 in file  fort.555*/

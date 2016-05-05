@@ -178,8 +178,16 @@ use commons
 !        v(1,i_part) =  v(1,i_part) + 0.5*dt*a(1,i_part)
 !        v(2,i_part) =  v(2,i_part) + 0.5*dt*a(2,i_part)
 !        v(3,i_part) =  v(3,i_part) + 0.5*dt*a(3,i_part)
-        v(:,i_part) =  v(:,i_part) + 0.5*dt*a(:,i_part)
 
+#ifdef BIDIMENSIONAL
+        v(1,i_part) =  v(1,i_part) + 0.5*dt*a(1,i_part)
+        v(2,i_part) = 0.0
+        v(3,i_part) =  v(3,i_part) + 0.5*dt*a(3,i_part)
+#else 
+        v(1,i_part) =  v(1,i_part) + 0.5*dt*a(1,i_part)
+        v(2,i_part) =  v(2,i_part) + 0.5*dt*a(2,i_part)
+        v(3,i_part) =  v(3,i_part) + 0.5*dt*a(3,i_part)
+#endif
     end do
 !print*,r0
 !print*,"Fin positions after verlet"

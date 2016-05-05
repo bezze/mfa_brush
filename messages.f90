@@ -16,6 +16,13 @@ subroutine messages
 #elif SYMMETRY == 1
         print '(/a/)', "  *  SIMULATING: a system with PBC in X, Y and Z coordinates (BULK)" 
 #endif
+
+! --- Artifical settings ---- 
+
+#ifdef BIDIMENSIONAL
+        print '(/a/)', "  *  SIMULATING: Velocities in Y coordinate are permanently set to ZERO, and won't evolve"
+#endif
+
 ! --- System settings ---- 
 
 #if SYSTEM == 0
