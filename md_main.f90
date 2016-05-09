@@ -69,6 +69,10 @@
           call orientation(0) ! writes brush bending orientation to log
 #endif
 
+#ifdef ACTIVE_BRUSH
+          call metronome(0) ! add proper log info 
+#endif
+
           tot_time = n_relax + n_obser 
             
            !print *,"v_fluid",v_fluid_fluid ; stop
@@ -148,6 +152,11 @@
 
 #ifdef ORIENTATION        
            call orientation(1) ! adds brush orientation bending forces and bending energy
+#endif
+
+
+#ifdef ACTIVE_BRUSH
+          call metronome(1) ! adds active brush forces
 #endif
 
 

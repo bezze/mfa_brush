@@ -68,13 +68,14 @@ OBJS = mfa_common.o \
       ewald_real.o \
       ewald_k.o \
       dipolar_correction.o \
-	  lgv_forces.o \
+      lgv_forces.o \
       my_binning.o \
       viscosity.o \
-	  wall_time.o \
+      wall_time.o \
       bending.o \
       bending_melt.o \
-orientation.o
+      orientation.o \
+      metronome.o 
 
 #obsoleted       fluid_fluid_test.o  
 #obsoleted       corrector.o   
