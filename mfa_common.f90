@@ -336,7 +336,7 @@ real (kind=8) ,allocatable :: force_or(:,:)
 
       integer, allocatable  :: mic_old(:,:)
 
-      integer :: i_dummy
+      integer :: i_dummy, j_dummy
 
 !---  s_time:  starting integer time; n_relax: number of relax. steps
 !     n_obser: number of steps in which observation takes place

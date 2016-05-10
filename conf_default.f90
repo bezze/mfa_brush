@@ -138,6 +138,8 @@ subroutine conf_default()
             call gen_brush(2)
 #       elif BRUSH_TYPE ==2              /* Ordered Brush*/
             call gen_brush(6)
+#       elif BRUSH_TYPE ==3              /* Ordered Brush, polymers aligned*/
+            call gen_brush(8)
 #       endif
 #   endif /* a system with brush chains */
 #endif  /*SYMMETRY*/

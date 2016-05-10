@@ -600,6 +600,69 @@ do j_chain = 0, 1 !0 is top wall. 1 is for bottom wall
     end do ! end i_col
 end do ! end j_chain bottom or top wall
 
+case(8)  ! ------ Ordered Brush ONLY in bottom wall: DROPLET
+    a_br = sqrt( boundary(1)*boundary(2)/n_chain ) !lattice parameter
+    a_br_2 = a_br / 2
+
+!Check parameter compatibility for ordered brush
+    if(mod(boundary(1),a_br).eq.0.) then 
+        n_col = int(boundary(1)/a_br)
+    else
+        print*, "ERROR: number of chains incorrect. Stopping programm"
+        print*, "boundary(1), should be a multiple of the lattice parameter a_br"
+        print*, "boundary(1) = ",boundary(1),"a_br = ",a_br
+        print*,"boundary(1)/a_br = ", boundary(1)/a_br
+        stop 
+    end if
+
+    if(mod(boundary(2),a_br).eq.0.) then
+        n_row = int(boundary(2)/a_br)
+    else
+       print*, "ERROR: number of chains incorrect. Stopping programm"
+       print*, "boundary(2), should be a multiple of the lattice parameter a_br"
+       print*, "boundary(2) = ",boundary(2),"a_br = ",a_br
+       print*,"boundary(2)/a_br = ", boundary(2)/a_br
+       stop 
+    end if
+   
+    q_part=1! grafted particle 
+    do i_col = 0, n_col-1 !loop for columns
+        do i_row = 0, n_row-1 !loop for rows
+            i_part = q_part  ! i_part reference to build the rest of the chain
+            r0(1,i_part) = a_br_2 + a_br*i_col !set head ubication
+            r0(2,i_part) = a_br_2 + a_br*i_row
+            
+            q_part = q_part + n_mon !next head 
+            r0(3,i_part) = z_head
+
+                do i_mon = 1,n_mon-1
+                    i_part = i_part + 1
+                        do i_dim = 1,n_dim
+                            if(i_dim.eq.1) then ! for x and y coordinates, random
+                                !r0(i_dim,i_part) = r0(i_dim,i_part-1) + (2*random(i_dim)-1.)*r_chain/sqrt3
+                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*COS(fi)*COS(alpha_ini)  !bottomi
+                            else 
+                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(fi)*COS(alpha_ini)  !bottomi
+! PBC in the plane          
+                                if(r0(i_dim,i_part).ge.boundary(i_dim)) then
+                                    r0(i_dim,i_part) = r0(i_dim,i_part) - boundary(i_dim)
+                                else if(r0(i_dim,i_part).le.0.) then
+                                    r0(i_dim,i_part) = r0(i_dim,i_part) + boundary(i_dim)
+                                end if
+                            end if !emd if x or y 
+                            if(i_dim.eq.n_dim) then             ! if z coor 
+#            if SOLVENT == 1 || SOLVENT == 2
+                             !  r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.2
+                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+#            elif SOLVENT == 0 || SOLVENT == 3
+                            !   r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.5
+                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+#            endif
+                             end if
+                        end do
+                       end do
+        end do
+    end do    
 !print*,"salio" !DEBUG
  end select
 end subroutine gen_brush
