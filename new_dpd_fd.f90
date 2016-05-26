@@ -201,7 +201,7 @@ end do
         f0_spring_1(i_dim) = f0_spring_1(i_dim)/n_time_ave
        end do
     if(mod(i_time,1).eq.0) then ! How frequently write out 
-        write(60,'(i7,3f17.5)') i_time,v_total/real(n_part-n_chain),            &
+        write(60,'(i11,3f17.5)') i_time,v_total/real(n_part-n_chain),            &
         e_total/dble(n_part-n_chain),t_total/dble(n_part-n_chain)
        end if
        do i_dim = 1,n_dim

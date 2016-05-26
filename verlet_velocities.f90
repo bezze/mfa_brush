@@ -203,10 +203,10 @@ use commons
 
 #if SYSTEM == 0 || SYSTEM == 1 || SYSTEM == 4
         write(61,'(i7,3g17.5)') i_time,v_fluid_fluid,v_intra_molec,v_fluid_wall
-        write(60,'(i7,3g17.5)') i_time,e_total*inv_N,v_total*inv_N, t_total*inv_N
+        write(60,'(i11,3g17.5)') i_time,e_total*inv_N,v_total*inv_N, t_total*inv_N
 #elif SYSTEM == 2  || SYSTEM == 3
         v_total = v_total + v_coul
-        write(60,'(i7,4g17.5)') i_time,e_total*inv_N,v_total*inv_N, t_total*inv_N,v_coul*inv_N
+        write(60,'(i11,4g17.5)') i_time,e_total*inv_N,v_total*inv_N, t_total*inv_N,v_coul*inv_N
 #endif
 
     end if
