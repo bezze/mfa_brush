@@ -69,7 +69,7 @@
  * 	Definition  of initial conditions 
  *
 */
-#undef BIDIMENSIONAL /* Constrains evolution in y direction making an effective 2D dynamics */
+#define BIDIMENSIONAL /* Constrains evolution in y direction making an effective 2D dynamics */
 
 #define VEL_INIT 0  /* VEL_INIT: particles starting velocities
 		     * 0 = velocities set to zero
@@ -91,7 +91,7 @@
 #undef SHEARED      /* if defined, the shear protocols are applied, mfa_input is different!! */
                     /* NOTE: if it is not defined, wall velocities can anyway been used */
 
-#define ACTIVE_BRUSH /* Adds external forces to the brush polymers */
+#undef ACTIVE_BRUSH /* Adds external forces to the brush polymers */
 
 #define  STORE 0 /* 0=Writes out folded coordinates,1=writes out unfolded (to follow diffusion)   */
 #define  WR_FORCES 0 /* 0=Writes out sum of forces on brush heads,1=writes out individual forcen on brush heads  */

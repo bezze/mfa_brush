@@ -5,7 +5,7 @@
       integer, intent(in) :: mode
       integer :: err_ov, i_ov, j_chain,ini_chain,i_col,i_row, n_col,n_row!, j_part!Add by Kevo to avoid overlap between grafting points
       real :: dis_ov_2, min_dis_2, a_br,a_br_2!sigma(1,1)**2 !Add by Kevo to avoid overlap between grafting points
-      real (kind=8) :: fi=0., alpha_ini=0.78
+      real (kind=8) :: fi=0., alpha_ini=.52 !0.78
 !a_br = lattice parameter for brush grafting points
       min_dis_2 = sigma(1,1)**2 ! Sets overlap radius 
 !---  Specify position of first monomer in chain
