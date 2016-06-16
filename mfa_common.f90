@@ -181,6 +181,13 @@ module commons
 
 ! DPD implementation with Velocity Verlet integration 
 
+! Metronome routine variables
+# ifdef ACTIVE_BRUSH
+real(kind=8), ALLOCATABLE ::  cos_mem(:)
+INTEGER, ALLOCATABLE ::  kick_mem(:)
+real(kind=8), ALLOCATABLE ::  k0(:)
+# endif
+
 ! Bending parameters and forces
 # ifdef BENDING        
 real (kind=8) :: k_bend, alpha_eq, v_bend,v_bend_melt  !elastic constant, equilibrium angle

@@ -11,7 +11,12 @@ real(kind=8) ::r_prev(3),r_next(3),dot_pr=0,r_prev_2=0,r_next_2=0,cos_alpha,dir_
 select case (mode_or)
 
 case(0)  ! Init  variables 
-    k_or =k_bend!sets orientation stiffnes
+#ifdef ACTIVE_BRUSH
+    ALLOCATE(k0( (n_mon-1)*n_chain) )
+    k0 = k_bend 
+#else
+    k_or = k_bend!sets orientation stiffnes
+#endif
     alpha_or=0
     print*,""
     print*," * Simulation with orientation stiffnes"
@@ -71,7 +76,11 @@ case(1)  ! orientation rigidity calculation
         !    dir_prev=dir_prev/sqrt(dir_prev_2)
         !end if
         delta_alpha=acos(cos_alpha)-alpha_or
-        F_mod=k_or*delta_alpha
+#ifdef ACTIVE_BRUSH
+        F_mod = k0(1+l*(n_mon-1))*delta_alpha
+#else
+        F_mod = k_or*delta_alpha
+#endif
         v_or=v_or+.5*F_mod*delta_alpha
         Do j=1,3
             force(j,l*n_mon+1) = force(j,l*n_mon+1) - F_mod*dir_next(j)
