@@ -70,6 +70,7 @@ Do l=0,n_chain-1 !n_chain , loop over chains
         !k_bend*delta_alpha/|r_prev|. This comes from V_vend=1/2*k_bend*delta_alpha_2
             dir_prev=dir_prev/sqrt(dir_prev_2*r_prev_2)
         end if
+!<<<<<<< HEAD
         delta_alpha=acos(cos_alpha)-alpha_eq
         if(cos_alpha.ge.1.0) then
                 delta_alpha=0.0-alpha_eq
@@ -77,6 +78,15 @@ Do l=0,n_chain-1 !n_chain , loop over chains
 
 #ifdef ACTIVE_BRUSH
         F_mod = k_bend*delta_alpha !k0(1+l*(n_mon-1))*delta_alpha
+!=======
+!        if(cos_alpha.ge.1.0) then
+!            print*, "Error cos_alpha =",cos_alpha, " >= 0"
+!            delta_alpha=0
+!        else
+!            delta_alpha=acos(cos_alpha)-alpha_eq
+!        end if
+!        F_mod=k_bend*delta_alpha
+!>>>>>>> a3f837ccf4886bc989600445226c924463927f57
         v_bend=v_bend+.5*F_mod*delta_alpha
 #else
         F_mod = k_bend*delta_alpha
