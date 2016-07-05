@@ -214,8 +214,11 @@ else      ! ---- READ mfa_input
     read(10,*) k_spring_wall,c_dummy ; print '(/a30,g12.5)', "   k_spring_wall = ", k_spring_wall
     
 # ifdef BENDING        
-read(10,*) k_bend ; print '(a30,i10)',"k_bend = ", k_bend !bending elastic constant, set default to 0
-read(10,*) alpha_eq ; print '(a30,i10)',"alpha_eq = ", alpha_eq  ! equilibrium bending angle set default to 0
+read(10,*) k_bend ; print '(a30,e14.6)',"k_bend = ", k_bend !bending elastic constant, set default to 0
+read(10,*) alpha_eq ; print '(a30,e14.6)',"alpha_eq = ", alpha_eq  ! equilibrium bending angle set default to 0
+! Active matter parameters. It must be beta1<beta2, no checking logic for now.
+read(10,*) beta1 ; print '(a30,e14.6)',"beta1 (deg) = ", beta1  ! Angle measured from horizontal plane
+read(10,*) beta2 ; print '(a30,e14.6)',"beta2 (deg) = ", beta2  ! Angle measured from horizontal plane.
 # endif
     
     read(10,*) !i_dummy
@@ -302,6 +305,8 @@ end if
 # ifdef BENDING        
        write(20,201) k_bend," bending elastic constant"  !bending elastic constant, set default to 0
        write(20,201) alpha_eq," bending equilibrium angle"  ! equilibrium bending angle set default to 0
+       write(20,201) beta1," beta1 (deg), active parameter"  ! Angle measured from horizontal plane
+       write(20,201) beta2," beta2 (deg), active parameter"  ! Angle measured from horizontal plane.
 # endif
 
        write(20,210) !f_cut_off," cut-off flag (0) short (1) long range [OBSOLETE]"

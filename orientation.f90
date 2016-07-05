@@ -76,6 +76,9 @@ case(1)  ! orientation rigidity calculation
         !    dir_prev=dir_prev/sqrt(dir_prev_2)
         !end if
         delta_alpha=acos(cos_alpha)-alpha_or
+        if(cos_alpha.ge.1.0) then
+                delta_alpha=0.0-alpha_eq
+        end if
 #ifdef ACTIVE_BRUSH
         F_mod = k0(1+l*(n_mon-1))*delta_alpha
 #else

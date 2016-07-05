@@ -192,6 +192,7 @@ real(kind=8), ALLOCATABLE ::  k0(:)
 # ifdef BENDING        
 real (kind=8) :: k_bend, alpha_eq, v_bend,v_bend_melt  !elastic constant, equilibrium angle
 real (kind=8) ,allocatable :: force_bend(:,:)
+real (kind=8) :: beta1, beta2 ! angles for active brush model.
 # endif
 # ifdef ORIENTATION        
 real (kind=8) :: k_or, alpha_or,v_or  !orientation elastic constant, orientation equilibrium angle, orientation potential energy

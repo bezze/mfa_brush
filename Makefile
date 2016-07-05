@@ -153,7 +153,7 @@ my_binning.o: my_binning.f90 mfa_common.o control_simulation.h
 bending.o: bending.f90 control_simulation.h mfa_common.o
 bending_melt.o: bending.f90 control_simulation.h mfa_common.o
 orientation.o: orientation.f90  bending.f90 control_simulation.h mfa_common.o
-
+metronome.o: metronome.f90 orientation.o control_simulation.h mfa_common.o 
 
 wall_time.o : wall_time.c
 	    gcc -c wall_time.c

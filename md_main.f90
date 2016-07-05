@@ -7,6 +7,10 @@ program md_pb
     integer  :: tot_time
     real (kind=8) :: t0,t1
     logical,parameter :: debug =.false.
+    !!!DEBUG
+    real (kind=8) :: force_old(3), force_new(3)
+    integer :: i, j
+    !!!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed
     ! [7/2013] : Bending Force for the brush added       
@@ -139,6 +143,14 @@ program md_pb
 #endif
 #endif
         call intra_molec
+!!!DEBUG!!!
+force_old(:) = force(:,2)
+!!!!!!!!!!!
+
+#ifdef ACTIVE_BRUSH
+        call metronome(3) ! adds active brush forces or changes k constants
+#endif
+
 #ifdef BENDING        
         call bending(1)  ! adds brush bending forces and bending energy
 #endif
@@ -148,9 +160,6 @@ program md_pb
         call bending_melt(1) ! adds melt bending forces and bending energy
 #endif
 
-#ifdef ACTIVE_BRUSH
-        call metronome(3) ! adds active brush forces
-#endif
 
 !#if defined (ACTIVE_BRUSH) && defined (ORIENTATION)
 !!The nature of this block of code makes it mandatory to be between metronome(1) and orientation(1)
@@ -161,6 +170,10 @@ program md_pb
 #ifdef ORIENTATION        
         call orientation(1) ! adds brush orientation bending forces and bending energy
 #endif
+
+!!!DEBUG!!!
+force_new(:) = force(:,2)
+!!!!!!!!!!!
 
 
 #if SYSTEM == 2 || SYSTEM == 3
@@ -190,7 +203,24 @@ program md_pb
         !----  Observe system after equilibration
 
         if(i_time.gt.n_relax) call observation 
-
+!!!!!!!!DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#ifdef ACTIVE_BRUSH
+        if (MOD(i_time,10).eq.0) then
+            write(56,'(ES12.4)', advance='no') i_time
+            write(56,'(ES12.4)', advance='no') cos_mem(1)
+            do j=1,3
+                !print*, j
+                write(56,'(ES12.4)', advance='no')   force_new(j)-force_old(j)  ! cadena 1, bead 2
+            end do
+            do j=1,n_chain
+                !print*, j
+                write(56,'(ES12.4)', advance='no')  k0(1+(j-1)*(n_mon-1))!k0(j) !  ! cadena 1, bead 2
+            end do
+            write(56,*)
+        end if
+#endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         !----  Make safety copies  to recover from crashes and write out of configurations
 
         if(mod(i_time,n_safe).eq.0) then
@@ -200,13 +230,14 @@ program md_pb
 #elif STORE == 1
             call store_config(4)  ! Writes out film_xmol and vel.dat UNFOLDED
 #endif
-            write(89,'(ES12.4)', advance='no') r_time
-            do i_dummy = 1, n_chain
-                do j_dummy=1,1
-                    write(89,'(2X,ES12.4)', advance='no') r0(j_dummy, 2+(i_dummy-1)*n_mon)- r0(j_dummy, 1+(i_dummy-1)*n_mon)
-                end do
-            end do
-            write(89,*)
+
+!            write(89,'(ES12.4)', advance='no') r_time
+!            do i_dummy = 1, n_chain
+!                do j=1,1
+!                    write(89,'(2X,ES12.4)', advance='no') r0(j, 2+(i-1)*n_mon)- r0(j, 1+(i-1)*n_mon)
+!                end do
+!            end do
+!            write(89,*)
         end if
 
     end do   ! --------------  ENDS TIME LOOP ----------------

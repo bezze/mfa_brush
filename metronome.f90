@@ -4,14 +4,16 @@ subroutine metronome(mode_metro)
 use commons
 implicit none
 integer, intent(in) :: mode_metro
-real(kind=8) :: r_last(3), r_last_mod, r_2rel(3) , beta=80.,  cos_th, f_ext, k_old, hard 
-real(kind=8) :: aux1(3), aux2(3), aux3(3), d1(3), d2(3), cosine, sine, S, invd1d2, kappa
+real(kind=8) :: r_last(3)=0., r_last_mod=0., r_2rel(3)=0.,  cos_th=0., f_ext=0., k_old=0., hard=0. 
+real(kind=8) :: aux1(3)=0., aux2(3)=0., aux3(3)=0., d1(3)=0., d2(3)=0., cosine=0., sine=0., S=0., invd1d2=0., kappa=0.
 !real(kind=8), ALLOCATABLE :: curv(:)
+! , beta1=80., beta2=88.
 real(kind=8), SAVE :: cos_lim1, cos_lim2, sin_lim
 integer :: l,i 
 integer, ALLOCATABLE, SAVE :: kick(:)
 real(kind=8), ALLOCATABLE, SAVE :: curv(:)
 integer, SAVE :: count_local 
+
 
 #ifdef ACTIVE_BRUSH
 select case (mode_metro)
@@ -24,75 +26,77 @@ ALLOCATE( cos_mem(n_chain) )
 ALLOCATE( kick(n_chain) )
 ALLOCATE( curv(n_chain) )
 cos_mem = 0.
-count_local = 1
 kick = 0
 curv = 0.
-cos_lim1 = cos(beta*pi/180.)
-cos_lim2 = cos(88.*pi/180.)
+count_local = 1
+cos_lim1 = cos(beta1*pi/180.)
+cos_lim2 = cos(beta2*pi/180.)
 print*, cos_lim2, cos_lim1
-sin_lim = sin(beta*pi/180.)
+sin_lim = sin(beta1*pi/180.)
 
-case(1)  ! Apply forces where angle condition requires
-! We'll compare 'cos(theta)' rather than 'theta'
-! It's biyective in [0,pi]->[-1,1], and cheaper to calclulate
-!cos_lim1 = abs( cos(pi/2.- beta*pi/180.) ) 
-f_ext = 10000. 
+!!! Case 1 & 2 were commented for easier debugging
+
+!!!case(1)  ! Apply forces where angle condition requires
+!!!! We'll compare 'cos(theta)' rather than 'theta'
+!!!! It's biyective in [0,pi]->[-1,1], and cheaper to calclulate
+!!!!cos_lim1 = abs( cos(pi/2.- beta*pi/180.) ) 
+!!!f_ext = 10000. 
+!!!
+!!!
+!!!do l = 1, n_chain
+!!!    !r_last(:) = r0(:, l*n_mon)-r0(:, 1+(l-1)*n_mon)
+!!!    !r_last_mod = sqrt(dot_product(r_last,r_last))
+!!!    !cos_th = r_last(1)/r_last_mod        
+!!!    r_2rel = r0(:, 3+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)         !REDO!!!
+!!!    cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
+!!!    if( (cos_mem(l).le.cos_lim1 ).and.(cos_th.ge.cos_lim1) ) then 
+!!!        kick(l) = kick(l) + 15
+!!!        if(l.le.n_chain/2) then  ! top wall 
+!!!            force(1, 2+(l-1)*n_mon) = force(1, 2+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
+!!!            force(1, 3+(l-1)*n_mon) = force(1, 3+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
+!!!            force(3, 2+(l-1)*n_mon) = force(3, 2+(l-1)*n_mon) + f_ext*(cos_lim1)!*sign(1.,cos_th)
+!!!            force(3, 3+(l-1)*n_mon) = force(3, 3+(l-1)*n_mon) + f_ext*(cos_lim1)!*sign(1.,cos_th)
+!!!        else if (l.gt.n_chain/2) then !bottom wall
+!!!            force(1, 2+(l-1)*n_mon) = force(1, 2+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
+!!!            force(1, 3+(l-1)*n_mon) = force(1, 3+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
+!!!            force(3, 2+(l-1)*n_mon) = force(3, 2+(l-1)*n_mon) - f_ext*(cos_lim1)!*sign(1.,cos_th)
+!!!            force(3, 3+(l-1)*n_mon) = force(3, 3+(l-1)*n_mon) - f_ext*(cos_lim1)!*sign(1.,cos_th)
+!!!        end if
+!!!
+!!!    end if
+!!!
+!!!    cos_mem(l) = cos_th  ! Store new memory for next step
+!!!
+!!!End do ! end do l
 
 
-do l = 1, n_chain
-    !r_last(:) = r0(:, l*n_mon)-r0(:, 1+(l-1)*n_mon)
-    !r_last_mod = sqrt(dot_product(r_last,r_last))
-    !cos_th = r_last(1)/r_last_mod        
-    r_2rel = r0(:, 3+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)         !REDO!!!
-    cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
-    if( (cos_mem(l).le.cos_lim1 ).and.(cos_th.ge.cos_lim1) ) then 
-        kick(l) = kick(l) + 15
-        if(l.le.n_chain/2) then  ! top wall 
-            force(1, 2+(l-1)*n_mon) = force(1, 2+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
-            force(1, 3+(l-1)*n_mon) = force(1, 3+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
-            force(3, 2+(l-1)*n_mon) = force(3, 2+(l-1)*n_mon) + f_ext*(cos_lim1)!*sign(1.,cos_th)
-            force(3, 3+(l-1)*n_mon) = force(3, 3+(l-1)*n_mon) + f_ext*(cos_lim1)!*sign(1.,cos_th)
-        else if (l.gt.n_chain/2) then !bottom wall
-            force(1, 2+(l-1)*n_mon) = force(1, 2+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
-            force(1, 3+(l-1)*n_mon) = force(1, 3+(l-1)*n_mon) + f_ext*(sin_lim)!*sign(1.,cos_th)
-            force(3, 2+(l-1)*n_mon) = force(3, 2+(l-1)*n_mon) - f_ext*(cos_lim1)!*sign(1.,cos_th)
-            force(3, 3+(l-1)*n_mon) = force(3, 3+(l-1)*n_mon) - f_ext*(cos_lim1)!*sign(1.,cos_th)
-        end if
-
-    end if
-
-    cos_mem(l) = cos_th  ! Store new memory for next step
-
-End do ! end do l
-
-
-case(2)
-! cos_lim2 < cos_lim1 for this to work
-
-!print *, cos_lim1, cos_lim2
-
-do l = 1, n_chain
-
-    r_2rel = r0(:, 3+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
-    cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
-    k_old = k0(1+(l-1)*n_mon)  ! storing old k
-
-    if( cos_th.gt.cos_lim1 ) then  ! the "more horizontal" (1) section
-        k0(1+(l-1)*n_mon) = 5*k_bend
-    else if( cos_th.lt.cos_lim2 ) then ! the "more vertical" (2) section 
-        k0(1+(l-1)*n_mon) = k_bend
-    else ! the middle section
-        if( cos_mem(l).le.cos_lim2 ) then ! if it came from 2
-            k0(1+(l-1)*n_mon) = k_bend  ! soft k
-        else if( cos_mem(l).gt.cos_lim1 ) then ! if it came from 1
-            k0(1+(l-1)*n_mon) = 5*k_bend   ! hard k
-        else ! if it came from the middle
-            k0(1+(l-1)*n_mon) = k_old   ! keep old k
-        end if
-    end if
-
-    cos_mem(l) = cos_th  !saving old position
-end do
+!!!case(2)
+!!!! cos_lim2 < cos_lim1 for this to work
+!!!
+!!!!print *, cos_lim1, cos_lim2
+!!!
+!!!do l = 1, n_chain
+!!!
+!!!    r_2rel = r0(:, 3+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
+!!!    cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
+!!!    k_old = k0(1+(l-1)*n_mon)  ! storing old k
+!!!
+!!!    if( cos_th.gt.cos_lim1 ) then  ! the "more horizontal" (1) section
+!!!        k0(1+(l-1)*n_mon) = 5*k_bend
+!!!    else if( cos_th.lt.cos_lim2 ) then ! the "more vertical" (2) section 
+!!!        k0(1+(l-1)*n_mon) = k_bend
+!!!    else ! the middle section
+!!!        if( cos_mem(l).le.cos_lim2 ) then ! if it came from 2
+!!!            k0(1+(l-1)*n_mon) = k_bend  ! soft k
+!!!        else if( cos_mem(l).gt.cos_lim1 ) then ! if it came from 1
+!!!            k0(1+(l-1)*n_mon) = 5*k_bend   ! hard k
+!!!        else ! if it came from the middle
+!!!            k0(1+(l-1)*n_mon) = k_old   ! keep old k
+!!!        end if
+!!!    end if
+!!!
+!!!    cos_mem(l) = cos_th  !saving old position
+!!!end do
 
 case(3)
 ! cos_lim2 < cos_lim1 for this to work
@@ -125,13 +129,13 @@ end do !end l
 hard = 1.
 
 do l = 1, n_chain
-    r_2rel = r0(:, 3+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
+    r_2rel = r0(:, 2+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
     cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
-    k_old = k0(1+(l-1)*(n_mon-1))  ! storing old k
+    !k_old = k0(1+(l-1)*(n_mon-1))  ! storing old k
 
     if( cos_th.gt.cos_lim1 ) then  ! the "more horizontal" (1) section
         !print *, 'is in (1)'
-        k0(1+(l-1)*(n_mon-1)) = hard*k_bend
+        k0(1+(l-1)*(n_mon-1)) = k_bend
         !do i = 2, n_mon-1
         !    k0(i+(l-1)*(n_mon-1)) = k_bend                
         !end do
@@ -146,13 +150,13 @@ do l = 1, n_chain
         if( cos_mem(l).le.cos_lim2 ) then ! if it came from 2
             !    print *, 'came from 2'
             kick(l) = kick(l) + 15
-            k0(1+(l-1)*(n_mon-1)) = -2.*hard*k_bend  ! soft k
+            k0(1+(l-1)*(n_mon-1)) = -.005*k_bend  ! soft k
             !do i = 2, n_mon-1
             !    k0(i+(l-1)*(n_mon-1)) = 5*k_bend                
             !end do
         else if( cos_mem(l).gt.cos_lim1 ) then ! if it came from 1
             !    print *, 'came from 1'
-            k0(1+(l-1)*(n_mon-1)) = hard*k_bend   ! hard k
+            k0(1+(l-1)*(n_mon-1)) = k_bend   ! hard k
 !        else ! if it came from the middle
 !            !    print *, 'came from here'
 !            k0(1+(l-1)*(n_mon-1)) = k_old   ! keep old k
@@ -169,9 +173,16 @@ end select
 count_local = count_local + 1
 
 if(count_local .eq.10) then
-    write(79,*) i_time, kick
-    write(81,*) i_time, curv
+    write(79,'(I12.4)', advance='no') i_time
+    write(81,'(I12.4)', advance='no') i_time
+    do l=1, n_chain
+        write(79,'(ES12.4)', advance='no') kick(l)
+        write(81,'(ES12.4)', advance='no') curv(l)
+    end do
     write(55,*) i_time, cos_th
+    write(79,*) 
+    write(81,*) 
+
     count_local = 1
     kick = 0
     curv = 0.
