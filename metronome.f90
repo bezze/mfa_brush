@@ -150,7 +150,10 @@ do l = 1, n_chain
         if( cos_mem(l).le.cos_lim2 ) then ! if it came from 2
             !    print *, 'came from 2'
             kick(l) = kick(l) + 15
+<<<<<<< HEAD
             k0(1+(l-1)*(n_mon-1)) = -.005*k_bend  ! soft k
+=======
+>>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
             !do i = 2, n_mon-1
             !    k0(i+(l-1)*(n_mon-1)) = 5*k_bend                
             !end do

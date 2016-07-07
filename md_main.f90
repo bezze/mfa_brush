@@ -8,8 +8,11 @@ program md_pb
     real (kind=8) :: t0,t1
     logical,parameter :: debug =.false.
     !!!DEBUG
-    real (kind=8) :: force_old(3), force_new(3)
-    integer :: i, j
+<<<<<<< HEAD
+=======
+    real*8 :: f_old(3), f_new(3)
+    integer :: i
+>>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
     !!!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed
@@ -143,12 +146,16 @@ program md_pb
 #endif
 #endif
         call intra_molec
-!!!DEBUG!!!
-force_old(:) = force(:,2)
-!!!!!!!!!!!
+<<<<<<< HEAD
+=======
+
+!!!DEBUG
+f_old=force(:,2+(n_chain-1)*n_mon)
+!!!
 
 #ifdef ACTIVE_BRUSH
-        call metronome(3) ! adds active brush forces or changes k constants
+        call metronome(3) ! adds active brush forces
+>>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
 #endif
 
 #ifdef BENDING        
@@ -171,10 +178,12 @@ force_old(:) = force(:,2)
         call orientation(1) ! adds brush orientation bending forces and bending energy
 #endif
 
-!!!DEBUG!!!
-force_new(:) = force(:,2)
-!!!!!!!!!!!
-
+<<<<<<< HEAD
+=======
+!!!DEBUG
+f_new=force(:,2+(n_chain-1)*n_mon)
+!!!
+>>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
 
 #if SYSTEM == 2 || SYSTEM == 3
         call ewald_k(1)  ! coulomb force calculation in K-space for Ewald sum
@@ -205,21 +214,21 @@ force_new(:) = force(:,2)
         if(i_time.gt.n_relax) call observation 
 !!!!!!!!DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#ifdef ACTIVE_BRUSH
-        if (MOD(i_time,10).eq.0) then
-            write(56,'(ES12.4)', advance='no') i_time
-            write(56,'(ES12.4)', advance='no') cos_mem(1)
-            do j=1,3
-                !print*, j
-                write(56,'(ES12.4)', advance='no')   force_new(j)-force_old(j)  ! cadena 1, bead 2
-            end do
-            do j=1,n_chain
-                !print*, j
-                write(56,'(ES12.4)', advance='no')  k0(1+(j-1)*(n_mon-1))!k0(j) !  ! cadena 1, bead 2
-            end do
-            write(56,*)
-        end if
-#endif
+!#ifdef ACTIVE_BRUSH
+!        if (MOD(i_time,10).eq.0) then
+!            write(56,'(ES12.4)', advance='no') i_time
+!            write(56,'(ES12.4)', advance='no') cos_mem(1)
+!            do j=1,3
+!                !print*, j
+!                write(56,'(ES12.4)', advance='no')   force_new(j)-force_old(j)  ! cadena 1, bead 2
+!            end do
+!            do j=1,n_chain
+!                !print*, j
+!                write(56,'(ES12.4)', advance='no')  k0(1+(j-1)*(n_mon-1))!k0(j) !  ! cadena 1, bead 2
+!            end do
+!            write(56,*)
+!        end if
+!#endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         !----  Make safety copies  to recover from crashes and write out of configurations
 
@@ -231,10 +240,18 @@ force_new(:) = force(:,2)
             call store_config(4)  ! Writes out film_xmol and vel.dat UNFOLDED
 #endif
 
-!            write(89,'(ES12.4)', advance='no') r_time
-!            do i_dummy = 1, n_chain
-!                do j=1,1
-!                    write(89,'(2X,ES12.4)', advance='no') r0(j, 2+(i-1)*n_mon)- r0(j, 1+(i-1)*n_mon)
+<<<<<<< HEAD
+=======
+
+        write(56,'(I12.4)', advance='no') i_time
+        write(56,'(ES12.4)', advance='no') cos_mem(n_chain)
+        write(56,'(ES12.4)', advance='no') k0(1+(n_chain-1)*(n_mon-1))
+        do i=1,3
+            write(56,'(ES12.4)', advance='no') f_old(i)-f_new(i)        
+        end do
+        write(56,*)
+
+>>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
 !                end do
 !            end do
 !            write(89,*)
