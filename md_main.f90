@@ -10,7 +10,7 @@ program md_pb
     !!!DEBUG
     real*8 :: f_old(3), f_new(3)
     integer :: i
-    !!!
+    !!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed
     ! [7/2013] : Bending Force for the brush added       
