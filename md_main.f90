@@ -8,11 +8,8 @@ program md_pb
     real (kind=8) :: t0,t1
     logical,parameter :: debug =.false.
     !!!DEBUG
-<<<<<<< HEAD
-=======
     real*8 :: f_old(3), f_new(3)
     integer :: i
->>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
     !!!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed
@@ -146,8 +143,6 @@ program md_pb
 #endif
 #endif
         call intra_molec
-<<<<<<< HEAD
-=======
 
 !!!DEBUG
 f_old=force(:,2+(n_chain-1)*n_mon)
@@ -155,7 +150,6 @@ f_old=force(:,2+(n_chain-1)*n_mon)
 
 #ifdef ACTIVE_BRUSH
         call metronome(3) ! adds active brush forces
->>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
 #endif
 
 #ifdef BENDING        
@@ -178,12 +172,9 @@ f_old=force(:,2+(n_chain-1)*n_mon)
         call orientation(1) ! adds brush orientation bending forces and bending energy
 #endif
 
-<<<<<<< HEAD
-=======
 !!!DEBUG
 f_new=force(:,2+(n_chain-1)*n_mon)
 !!!
->>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
 
 #if SYSTEM == 2 || SYSTEM == 3
         call ewald_k(1)  ! coulomb force calculation in K-space for Ewald sum
@@ -240,8 +231,6 @@ f_new=force(:,2+(n_chain-1)*n_mon)
             call store_config(4)  ! Writes out film_xmol and vel.dat UNFOLDED
 #endif
 
-<<<<<<< HEAD
-=======
 
         write(56,'(I12.4)', advance='no') i_time
         write(56,'(ES12.4)', advance='no') cos_mem(n_chain)
@@ -251,7 +240,6 @@ f_new=force(:,2+(n_chain-1)*n_mon)
         end do
         write(56,*)
 
->>>>>>> d717153... Experimental commit after going down the tree history.If changes prove satisfactory, merge or new branch will be considered
 !                end do
 !            end do
 !            write(89,*)
