@@ -10,6 +10,9 @@ program md_pb
     !!!DEBUG
     real*8 :: f_old(3), f_new(3)
     integer :: i
+#ifndef ACTIVE_BRUSH
+    real*8 :: r_rel(3), cos_th
+#endif
     !!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed
@@ -144,9 +147,6 @@ program md_pb
 #endif
         call intra_molec
 
-!!!DEBUG
-f_old=force(:,2+(n_chain-1)*n_mon)
-!!!
 
 #ifdef ACTIVE_BRUSH
         call metronome(3) ! adds active brush forces
@@ -161,12 +161,9 @@ f_old=force(:,2+(n_chain-1)*n_mon)
         call bending_melt(1) ! adds melt bending forces and bending energy
 #endif
 
-
-!#if defined (ACTIVE_BRUSH) && defined (ORIENTATION)
-!!The nature of this block of code makes it mandatory to be between metronome(1) and orientation(1)
-!        call metronome(2)
-!        call orientation(2) !Changes the bending constants of the heads according to the metronome condition
-!#endif
+!!!DEBUG
+f_old=force(:,2+(n_chain-1)*n_mon)
+!!!
 
 #ifdef ORIENTATION        
         call orientation(1) ! adds brush orientation bending forces and bending energy
@@ -203,24 +200,7 @@ f_new=force(:,2+(n_chain-1)*n_mon)
         !----  Observe system after equilibration
 
         if(i_time.gt.n_relax) call observation 
-!!!!!!!!DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!#ifdef ACTIVE_BRUSH
-!        if (MOD(i_time,10).eq.0) then
-!            write(56,'(ES12.4)', advance='no') i_time
-!            write(56,'(ES12.4)', advance='no') cos_mem(1)
-!            do j=1,3
-!                !print*, j
-!                write(56,'(ES12.4)', advance='no')   force_new(j)-force_old(j)  ! cadena 1, bead 2
-!            end do
-!            do j=1,n_chain
-!                !print*, j
-!                write(56,'(ES12.4)', advance='no')  k0(1+(j-1)*(n_mon-1))!k0(j) !  ! cadena 1, bead 2
-!            end do
-!            write(56,*)
-!        end if
-!#endif
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
         !----  Make safety copies  to recover from crashes and write out of configurations
 
         if(mod(i_time,n_safe).eq.0) then
@@ -233,16 +213,19 @@ f_new=force(:,2+(n_chain-1)*n_mon)
 
 
         write(56,'(I12.4)', advance='no') i_time
+#ifdef ACTIVE_BRUSH
         write(56,'(ES12.4)', advance='no') cos_mem(n_chain)
         write(56,'(ES12.4)', advance='no') k0(1+(n_chain-1)*(n_mon-1))
+#else
+        r_rel = r0(:, 2+(n_chain-1)*n_mon)- r0(:, 1+(n_chain-1)*n_mon)  
+        cos_th = r_rel(1)/SQRT(DOT_PRODUCT(r_rel,r_rel))
+        write(56,'(ES12.4)', advance='no') cos_th
+#endif
         do i=1,3
             write(56,'(ES12.4)', advance='no') f_old(i)-f_new(i)        
         end do
         write(56,*)
 
-!                end do
-!            end do
-!            write(89,*)
         end if
 
     end do   ! --------------  ENDS TIME LOOP ----------------
