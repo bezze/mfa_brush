@@ -188,6 +188,12 @@ INTEGER, ALLOCATABLE ::  kick_mem(:)
 real(kind=8), ALLOCATABLE ::  k0(:)
 # endif
 
+! Spring array routine variables
+# ifdef SPRING_ARRAY
+INTEGER, ALLOCATABLE :: Mindex(:,:) ! Index matrix of 2 bead of i-chain for r0
+REAL (KIND=8) :: k_spr_x, k_spr_y ! spring elastic constants
+# endif
+
 ! Bending parameters and forces
 # ifdef BENDING        
 real (kind=8) :: k_bend, alpha_eq, v_bend,v_bend_melt  !elastic constant, equilibrium angle

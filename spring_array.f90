@@ -1,21 +1,90 @@
-subroutine spring_array()
-! Routine that introduces an elastic (Hook) force between neighboring chains
-! The force is applied to the second bead of the chain
-
+subroutine spring_array(mode)
 #include "control_simulation.h"
-use commons
+    ! Routine that introduces an elastic (Hook) force between neighboring chains
+    ! The force is applied to the second bead of the chain
+    use commons
 
-cols= NINT(SQRT(0.5*n_chain*boundary(1)/boundary(2)))
-rows= NINT(SQRT(0.5*n_chain*boundary(2)/boundary(1)))
-neig= (1, -1, rows, -rows)
-f_array= 0.d0
+    INTEGER,  intent(in) :: mode
 
+    INTEGER :: cols,rows,i,j,ni,nj,ir0,ineigh, bead_site
+    REAL (KIND=8) ::  r_neigh(3), r_graft(3), d, dist
+    REAL (KIND=8), ALLOCATABLE :: f_array(:,:)
+    select case (mode)
 
-do j_chain = 0, 1 !0 is top wall. 1 is for bottom wall
-    l_half =  j_chain * n_mon * n_chain / 2 ! starting particle to set it's location
-    do l = 0, n_chain-1
-        l = l + l_half  ! top/bot correction
-        
+    case(0)
+
+        cols= NINT(SQRT(0.5*n_chain*boundary(1)/boundary(2)))
+        rows= NINT(SQRT(0.5*n_chain*boundary(2)/boundary(1)))
+        k_spr_x= 1
+        k_spr_y= 1
+        f_array= 0.d0
+
+        bead_site= 2 ! This is the number of the monomer in each chain. It should be ranged
+        ! between 1 and n_mon. If not, weird array springs will be formed.
+
+        ALLOCATE(Mindex(0:rows+1,0:cols+1))
+        ALLOCATE(f_array(3,n_part))
+
+        Mindex=-1 ! Initializing to -1. If something goes wrong, -1 index should crash program.
+        f_array=0.d0
+
+        ! This matrix should contain all indexes of the i-beat_site bead of every chain
+        do j=1,cols
+            do i=1,rows
+                Mindex(i,j) =  (j*rows-i)*n_mons + bead_site
+            end do
+        end do
+
+        ! This is the trick for periodic boundary conditions
+        Mindex(:,0) = Mindex(:,col)
+        Mindex(:,cols+1) = Mindex(:,1)
+        Mindex(0,:) = Mindex(row,:)
+        Mindex(row+1,:) = Mindex(1,:)
+
+    case(1)
+        do l=0,1 ! Bot/Top loop
+            do j=0,cols+1
+                do i=0,rows+1
+                    ir0= Mindex(i,j)+l*n_chain/2
+                    do nj=-1,1
+                        ineigh= Mindex(i,j+nj)+l*n_chain/2
+                        r_neigh = r0(:, ir0) - r0(:, ineigh)
+                        ! r_neigh is the vector that joins the 2nd beads of chains
+
+                        r_graft = r0(:, ir0-1) - r0(:, ineigh-1) 
+                        ! r_graft is the vector that joins the 1st beads of chains
+
+                        d = SQRT(DOT_PRODUCT(r_graft,r_graft))
+                        ! d es la magnitud de r_graft. Será la distancia de equil.
+
+                        dist = SQRT(DOT_PRODUCT(r_neigh,r_neigh))
+                        ! dist is the distance between the 2nd beads of neighbors
+
+                        f_array(:, ir0) = f_array(:, ir0) - k_spr_x*(dist-d)*r_neigh/dist
+                    end do !nj
+
+                    do ni=-1,1
+                        ineigh= Mindex(i+ni,j)+l*n_chain/2
+                        r_neigh = r0(:, ir0) - r0(:, ineigh)
+                        ! r_neigh is the vector that joins the 2nd beads of chains
+
+                        r_graft = r0(:, ir0-1) - r0(:, ineigh-1) 
+                        ! r_graft is the vector that joins the 1st beads of chains
+
+                        d = SQRT(DOT_PRODUCT(r_graft,r_graft))
+                        ! d es la magnitud de r_graft. Será la distancia de equil.
+
+                        dist = SQRT(DOT_PRODUCT(r_neigh,r_neigh))
+                        ! dist is the distance between the 2nd beads of neighbors
+
+                        f_array(:, ir0) = f_array(:, ir0) - k_spr_y*(dist-d)*r_neigh/dist
+                    end do !ni
+
+                end do !i
+            end do !j
+        end do !l
+
+        force = force + f_array
         ! NEIGHBOURS:
         ! Each bead has 4 neigh. . According to gen_brush case(5) they're 
         ! generated first in rows and then in cols (row -> fast, col -> slow),
@@ -23,22 +92,6 @@ do j_chain = 0, 1 !0 is top wall. 1 is for bottom wall
         ! This means that each (closest) neighboring bead is of the form:
         ! -- Horizontal) ( i_chain +/- n_rows )*n_mon
         ! -- Vertical)   ( i_chain +/- 1 )*n_mon
-        
-        do i = 1, 4
-            
-            r_neigh = r0(:, 2+l*n_mon) - r0(:, 2+(l+neigh(i))*n_mon)
-            ! r_neigh is the vector that joins the 2nd beads of chains
-            r_graft = r0(:, 1+l*n_mon) - r0(:, 1+(l+neigh(i))*n_mon)  
-            ! r_graft is the vector that joins the 1st beads of chains
-            d = SQRT(DOT_PRODUCT(r_graft,r_graft))
-            ! d es la magnitud de r_graft. Será la distancia de equil.
-            dist = SQRT(DOT_PRODUCT(r_neigh,r_neigh))
-            ! dist is the distance between the 2nd beads of neighbors
-            f_array(:,2+l*n_mon) = f_array(:,2+l*n_mon) - k_array*(dist-d)
+    end select
 
-        end do ! i
-
-    end do ! l
-
-end do ! j_chain
 end subroutine spring_array

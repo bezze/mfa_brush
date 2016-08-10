@@ -80,6 +80,10 @@ program md_pb
     call metronome(0) ! add proper log info 
 #endif
 
+#ifdef SPRING_ARRAY
+        call spring_array(0) ! adds active brush forces
+#endif
+
     tot_time = n_relax + n_obser 
 
     !print *,"v_fluid",v_fluid_fluid ; stop
@@ -150,6 +154,10 @@ program md_pb
 
 #ifdef ACTIVE_BRUSH
         call metronome(3) ! adds active brush forces
+#endif
+
+#ifdef SPRING_ARRAY
+        call spring_array(1) ! adds active brush forces
 #endif
 
 #ifdef BENDING        

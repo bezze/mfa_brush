@@ -75,7 +75,8 @@ OBJS = mfa_common.o \
       bending.o \
       bending_melt.o \
       orientation.o \
-      metronome.o 
+      metronome.o \
+	  spring_array.o
 
 #obsoleted       fluid_fluid_test.o  
 #obsoleted       corrector.o   
