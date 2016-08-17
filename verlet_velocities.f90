@@ -170,6 +170,11 @@ use commons
 #ifdef BENDING_MELT
       v_total = v_total + v_bend_melt !Add melt bending energy
 #endif
+
+#ifdef SPRING_ARRAY
+      v_total = v_total + v_array  ! Add spring array energy
+#endif
+
 !        print *,"v_fluid_fluid=",v_fluid_fluid/dble(n_part) !; stop
 
 !

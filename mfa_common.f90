@@ -191,7 +191,7 @@ real(kind=8), ALLOCATABLE ::  k0(:)
 ! Spring array routine variables
 # ifdef SPRING_ARRAY
 INTEGER, ALLOCATABLE :: Mindex(:,:) ! Index matrix of 2 bead of i-chain for r0
-REAL (KIND=8) :: k_spr_x, k_spr_y ! spring elastic constants
+REAL (KIND=8) :: k_spr_x, k_spr_y, v_array ! spring elastic constants
 # endif
 
 ! Bending parameters and forces
