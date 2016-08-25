@@ -220,6 +220,9 @@ read(10,*) alpha_eq ; print '(a30,e14.6)',"alpha_eq = ", alpha_eq  ! equilibrium
 read(10,*) beta1 ; print '(a30,e14.6)',"beta1 (deg) = ", beta1  ! Angle measured from horizontal plane
 read(10,*) beta2 ; print '(a30,e14.6)',"beta2 (deg) = ", beta2  ! Angle measured from horizontal plane.
 # endif
+# ifdef ACTIVE_BRUSH        
+read(10,*) k_act ; print '(a30,e14.6)',"k_act = ", k_act  ! Active k constant used in active brush (metronome)
+# endif
     
     read(10,*) !i_dummy
     read(10,*) !c_dummy
@@ -307,6 +310,9 @@ end if
        write(20,201) alpha_eq," bending equilibrium angle"  ! equilibrium bending angle set default to 0
        write(20,201) beta1," beta1 (deg), active parameter"  ! Angle measured from horizontal plane
        write(20,201) beta2," beta2 (deg), active parameter"  ! Angle measured from horizontal plane.
+# endif
+# ifdef ACTIVE_BRUSH        
+       write(20,201) k_act," k_act, elastic constant, active parameter"  ! 
 # endif
 
        write(20,210) !f_cut_off," cut-off flag (0) short (1) long range [OBSOLETE]"

@@ -10,9 +10,6 @@ program md_pb
     !!!DEBUG
     real*8 :: f_old(3), f_new(3)
     integer :: i
-#ifndef ACTIVE_BRUSH
-    real*8 :: r_rel(3), cos_th
-#endif
     !!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed

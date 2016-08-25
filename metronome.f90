@@ -4,7 +4,7 @@ subroutine metronome(mode_metro)
 use commons
 implicit none
 integer, intent(in) :: mode_metro
-real(kind=8) :: r_last(3)=0., r_last_mod=0., r_2rel(3)=0.,  cos_th=0., f_ext=0., k_old=0., hard=0. 
+real(kind=8) :: r_last(3)=0., r_last_mod=0., r_2rel(3)=0., f_ext=0., k_old=0., hard=0. 
 real(kind=8) :: aux1(3)=0., aux2(3)=0., aux3(3)=0., d1(3)=0., d2(3)=0., cosine=0., sine=0., S=0., invd1d2=0., kappa=0.
 !real(kind=8), ALLOCATABLE :: curv(:)
 ! , beta1=80., beta2=88.
@@ -29,6 +29,7 @@ cos_mem = 0.
 kick = 0
 curv = 0.
 count_local = 1
+cos_th=0.
 cos_lim1 = cos(beta1*pi/180.)
 cos_lim2 = cos(beta2*pi/180.)
 print*, cos_lim2, cos_lim1
@@ -150,7 +151,7 @@ do l = 1, n_chain
         if( cos_mem(l).le.cos_lim2 ) then ! if it came from 2
             !    print *, 'came from 2'
             kick(l) = kick(l) + 15
-            k0(1+(l-1)*(n_mon-1)) = -.005*k_bend  ! soft k
+            k0(1+(l-1)*(n_mon-1)) = k_act !-.005*k_bend  ! soft k
             !do i = 2, n_mon-1
             !    k0(i+(l-1)*(n_mon-1)) = 5*k_bend                
             !end do

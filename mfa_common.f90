@@ -183,10 +183,13 @@ module commons
 
 ! Metronome routine variables
 # ifdef ACTIVE_BRUSH
-real(kind=8), ALLOCATABLE ::  cos_mem(:)
+REAL (KIND=8), ALLOCATABLE ::  cos_mem(:)
 INTEGER, ALLOCATABLE ::  kick_mem(:)
-real(kind=8), ALLOCATABLE ::  k0(:)
+REAL (KIND=8), ALLOCATABLE ::  k0(:)
+REAL (KIND=8) :: k_act
 # endif
+
+REAL (KIND=8) :: r_rel(3), cos_th ! For angle monitoring in fort.56
 
 ! Spring array routine variables
 # ifdef SPRING_ARRAY

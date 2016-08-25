@@ -12,15 +12,20 @@
 /*BRUSH TYPE: sets how the grafted beads from the polymer brush will be chosen
  * 0: randomly distributed with a uniform distribution. Beads may overlap one another.
  * 1: randomly distributed with a uniform distribution. Overlaping beads are forbidden.
- * 2: ordered brush. The distance between neighbouring grafted beads is equal for all points*/
+ * 2: ordered brush. The distance between neighbouring grafted beads is equal for all points
+ * 3: ordered brush, starts aligned in one direction, i.e. 'combed'*/
 
-#define BRUSH_TYPE 0 
+#define BRUSH_TYPE 3 
 
 /* SYMMETRY */
 /* 0 = channel geometry: no PBC in Z; 
  * 1 = Bulk geometry PBC in 3D */
 
 #define SYMMETRY 0   
+
+/* Flat dynamics. Sets every 'y' component to zero.*/
+
+#define BIDIMENSIONAL
 
 /* Potentials and particles */
 
@@ -43,13 +48,21 @@
 
 #undef HYDROPHOBIA  /* if def, the interaction between brush and melt is purely repulsive *//
 #undef BRUSH_IN_GOOD_SV /*if def the interaction between grafted polimers is purely repulsive*/
-#undef BENDING  /* if def the grafted polymers are assumed to be semiflxible: bending potential *//
+#define BENDING  /* if def the grafted polymers are assumed to be semiflxible: bending potential *//
 #undef BENDING_MELT  /* if def the melt polymers are assumed to be semiflxible: bending potential *//
-#undef ORIENTATION  /* if def the grafted polymers will be oriented through an harmonic potential*//
+#define ORIENTATION  /* if def the grafted polymers will be oriented through an harmonic potential*//
 
 #undef PARTICLE_4 /* If defined the program runs with four different particle type */
 
 #undef STARS /*whether you want to simulate with or without stars, sigma is fixed to 1. As well as sigma for walls */
+
+/* Active brush polymers*/
+
+#define ACTIVE_BRUSH
+
+/* Brushes are coupled by springs */
+
+#define SPRING_ARRAY
 
 /* Thermostat */
 
