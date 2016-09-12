@@ -193,7 +193,9 @@ f_new=force(:,2+(n_chain-1)*n_mon)
         ! -----  Update  velocities
 
         call verlet_velocities()
-
+        !if(mod(i_time,100).eq.0) then
+        !print *, a
+        !endif
 #ifdef DPD_VV                     
 
         !Note: this recalculates Fd with the new velocities and updates F for the begining og the next cycle 

@@ -37,8 +37,9 @@ use commons
             v(1,i_part) = v(1,i_part) + 0.5*dt*a(1,i_part)    
 #ifdef BIDIMENSIONAL
             v(2,:) = 0.
-#else BIDIMENSIONAL
+#else 
             v(2,i_part) = v(2,i_part) + 0.5*dt*a(2,i_part)    
+            !print *, v(2,i_part), a(2,i_part)
 #endif
             v(3,i_part) = v(3,i_part) + 0.5*dt*a(3,i_part)    
         end do
