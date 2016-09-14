@@ -19,10 +19,18 @@ subroutine spring_array(mode)
 
         cols= NINT(SQRT(0.5*n_chain*boundary(1)/boundary(2)))
         rows= NINT(SQRT(0.5*n_chain*boundary(2)/boundary(1)))
+
+        if ( (rows.eq.1).or.(cols.eq.1) ) then
+            print *, " **  WARNING: Either rows or columns are equal to 1. This will break periodic boundary conditions for the spring array "
+            print *, "rows=",rows,"  cols=",cols
+            print *, " ** Exiting now..."
+            STOP
+        endif
+
         k_spr_x= 800
         k_spr_y= 0
         ALLOCATE(f_array(3,n_part))
-        bead_site= 1 ! This is the number of the monomer in each chain, with grafted =0. It should be ranged
+        bead_site= 9 ! This is the number of the monomer in each chain, with grafted =0. It should be ranged
         ! between 1 and n_mon-1. If not, weird array springs will be formed.
 
         ALLOCATE(Mindex(0:rows+1,0:cols+1))

@@ -35,6 +35,13 @@ cos_lim2 = cos(beta2*pi/180.)
 print*, cos_lim2, cos_lim1
 sin_lim = sin(beta1*pi/180.)
 
+if (beta1.gt.beta2) then
+    print *, " **  WARNING: beta1 is greater than beta2, this will render active mode useless"
+    print *, "(beta1=",beta1,") > (beta2=",beta2,")"
+    print *, " ** Exiting now..."
+    STOP
+endif
+
 !!! Case 1 & 2 were commented for easier debugging
 
 !!!case(1)  ! Apply forces where angle condition requires
@@ -167,7 +174,8 @@ do l = 1, n_chain
     cos_mem(l) = cos_th  !saving old position
 end do
 
-
+case(4)
+    ! This will be a completely active case
 
 end select
 
