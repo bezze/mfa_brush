@@ -182,19 +182,20 @@ module commons
 ! DPD implementation with Velocity Verlet integration 
 
 ! Metronome routine variables
+REAL(8) :: pot
+REAL (KIND=8) :: k_act
 # ifdef ACTIVE_BRUSH
 REAL (KIND=8), ALLOCATABLE ::  cos_mem(:)
 INTEGER, ALLOCATABLE ::  kick_mem(:)
 REAL (KIND=8), ALLOCATABLE ::  k0(:)
-REAL (KIND=8) :: k_act
 # endif
 
 REAL (KIND=8) :: r_rel(3), cos_th ! For angle monitoring in fort.56
 
 ! Spring array routine variables
+REAL (KIND=8) :: k_spr_x, k_spr_y, v_array ! spring elastic constants
 # ifdef SPRING_ARRAY
 INTEGER, ALLOCATABLE :: Mindex(:,:) ! Index matrix of 2 bead of i-chain for r0
-REAL (KIND=8) :: k_spr_x, k_spr_y, v_array ! spring elastic constants
 # endif
 
 ! Bending parameters and forces

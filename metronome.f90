@@ -156,18 +156,14 @@ do l = 1, n_chain
     else ! the middle section
         ! print *, 'middle and'
         if( cos_mem(l).le.cos_lim2 ) then ! if it came from 2
-            !    print *, 'came from 2'
+
             kick(l) = kick(l) + 15
             k0(1+(l-1)*(n_mon-1)) = k_act !-.005*k_bend  ! soft k
-            !do i = 2, n_mon-1
-            !    k0(i+(l-1)*(n_mon-1)) = 5*k_bend                
-            !end do
+
         else if( cos_mem(l).gt.cos_lim1 ) then ! if it came from 1
-            !    print *, 'came from 1'
-            k0(1+(l-1)*(n_mon-1)) = k_bend   ! hard k
-!        else ! if it came from the middle
-!            !    print *, 'came from here'
-!            k0(1+(l-1)*(n_mon-1)) = k_old   ! keep old k
+
+            k0(1+(l-1)*(n_mon-1)) = k_bend   !
+
         end if
     end if
     ! write(55,*) cos_th, cos_lim1, cos_lim2

@@ -97,6 +97,14 @@ Do l=0,n_chain-1 !n_chain , loop over chains
             F_bend(j)=F_mod*dir_prev(j)
             F_bend(3+j)=F_mod*dir_next(j)
         End do
+        if (l.eq.(n_chain-1)) then
+            if (i.eq.1) then
+                pot=0
+                Do j=1,3
+                    pot = pot + F_bend(3+j)*v(j, 2+(n_chain-1)*n_mon)
+                End do
+            end if
+        end if
         Do j=1,3
             force(j,l*n_mon+i-1) = force(j,l*n_mon+i-1) + F_bend(j)
             force(j,l*n_mon+i)   = force(j,l*n_mon+i) - F_bend(j) - F_bend(3+j)
@@ -111,8 +119,8 @@ Do l=0,n_chain-1 !n_chain , loop over chains
         !print*, v_bend, "bending ENERGY"
         ! ERASE AFTER CHECKING
         !!!!!!!!!!!!!!!!!!!!!!!!!!!
-    End Do
-End do
+    End Do ! i
+End do ! l
 end select
 
 #endif /*close BENDING*/

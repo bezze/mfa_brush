@@ -27,10 +27,10 @@ subroutine spring_array(mode)
             STOP
         endif
 
-        k_spr_x= 800
-        k_spr_y= 0
+!        k_spr_x= 800
+!        k_spr_y= 0
         ALLOCATE(f_array(3,n_part))
-        bead_site= 9 ! This is the number of the monomer in each chain, with grafted =0. It should be ranged
+        bead_site= 1 ! This is the number of the monomer in each chain, with grafted =0. It should be ranged
         ! between 1 and n_mon-1. If not, weird array springs will be formed.
 
         ALLOCATE(Mindex(0:rows+1,0:cols+1))
@@ -50,13 +50,19 @@ subroutine spring_array(mode)
         Mindex(:,cols+1) = Mindex(:,1)
         Mindex(0,:) = Mindex(rows,:)
         Mindex(rows+1,:) = Mindex(1,:)
-        do l=0,rows+1
-print *, Mindex(l,:)
-end do
+        Mindex(rows+1,cols+1)=0 
+        Mindex(0,0)=0 
+        Mindex(rows+1,0)=0 
+        Mindex(0,cols+1)=0 
+        
         print *, ""
         print *, " * (Spring Array ON) Chains are linked by springs"
         print *, " -- k_spr_x=", k_spr_x 
         print *, " -- k_spr_y=", k_spr_y 
+        print *, " -- Index Array:"
+        do l=0,rows+1
+            print *, Mindex(l,:)
+        end do
 
     case(1)
         f_array=0.d0
@@ -180,6 +186,8 @@ FUNCTION func_pot_fue(k)
 
     func_pot_fue(1:3) =  k*(d-dg)*r_neigh/d
     func_pot_fue(0) = .5*k*(d-dg)**2
+
+    !print *, dg, d 
 
 END FUNCTION func_pot_fue
 

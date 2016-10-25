@@ -8,8 +8,8 @@ program md_pb
     real (kind=8) :: t0,t1
     logical,parameter :: debug =.false.
     !!!DEBUG
-    real*8 :: f_old(3), f_new(3)
-    integer :: i
+    real*8, ALLOCATABLE :: f_old(:,:), f_new(:,:)
+    integer :: i,j
     !!
     ! [12/2015] Paralelization with OpenMP
     ! [11/2013]: Droplet compatibility fixed
@@ -59,6 +59,13 @@ program md_pb
     call init_params()   ! md simulation parameters, box dimensions. Read mfa_input
     call init_config()   ! initial conf or read an old one
     call init_obser()    ! Measurable variables init.
+
+!!! DEBUG
+
+ALLOCATE(f_old(3,n_part))
+ALLOCATE(f_new(3,n_part))
+
+!!! DEBUG
 
 #ifdef BENDING     
     call bending(0) ! writes brush bending constants  to log
@@ -153,9 +160,17 @@ program md_pb
         call metronome(3) ! adds active brush forces
 #endif
 
+!!!DEBUG
+f_old=force!(:,2+(n_chain-1)*n_mon)
+!!!
+
 #ifdef SPRING_ARRAY
         call spring_array(1) ! adds active brush forces
 #endif
+
+!!!DEBUG
+f_new=force!(:,2+(n_chain-1)*n_mon)
+!!!
 
 #ifdef BENDING        
         call bending(1)  ! adds brush bending forces and bending energy
@@ -166,17 +181,11 @@ program md_pb
         call bending_melt(1) ! adds melt bending forces and bending energy
 #endif
 
-!!!DEBUG
-f_old=force(:,2+(n_chain-1)*n_mon)
-!!!
 
 #ifdef ORIENTATION        
         call orientation(1) ! adds brush orientation bending forces and bending energy
 #endif
 
-!!!DEBUG
-f_new=force(:,2+(n_chain-1)*n_mon)
-!!!
 
 #if SYSTEM == 2 || SYSTEM == 3
         call ewald_k(1)  ! coulomb force calculation in K-space for Ewald sum
@@ -212,6 +221,22 @@ f_new=force(:,2+(n_chain-1)*n_mon)
 
         if(mod(i_time,n_safe).eq.0) then
             call store_config(2)  ! writes out conf_xmol and conf_new
+
+        !<--- DEBUG ----
+        open(143,file="force_xmol",status="unknown",position="append")
+        write(143,*) n_part
+        write(143,*) 
+        do j=1,n_part
+            write(143,'(A)',advance='no') 'Type'
+        do i=1,3
+            write(143,203,advance='no') f_old(i,j)-f_new(i,j)!'(ES12.4)' 
+        end do
+        write(143,*) 
+        end do
+        close(143)
+        !---- DEBUG --->
+
+
 #if STORE == 0
             call store_config(3)  ! Writes out film_xmol and vel.dat
 #elif STORE == 1
@@ -229,9 +254,10 @@ f_new=force(:,2+(n_chain-1)*n_mon)
         write(56,'(ES12.4)', advance='no') cos_th
         write(56,'(ES12.4)', advance='no') k_bend  ! Writing useless column for script compatibility
 #endif
-        do i=1,3
-            write(56,'(ES12.4)', advance='no') f_old(i)-f_new(i)        
-        end do
+       ! do i=1,3
+       !     write(56,'(ES12.4)', advance='no') f_old(i)-f_new(i)        
+       ! end do
+        write(56,'(ES12.4)', advance='no') pot
         write(56,*)
 
         end if
@@ -245,6 +271,7 @@ f_new=force(:,2+(n_chain-1)*n_mon)
     call get_walltime(t1)
     print *,'    WALL TIME (s)= ',t1-t0
 
+    203 format(3f13.4)
 end program md_pb
 
 
