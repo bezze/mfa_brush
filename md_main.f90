@@ -224,16 +224,23 @@ f_new=force!(:,2+(n_chain-1)*n_mon)
 
         !<--- DEBUG ----
         open(143,file="force_xmol",status="unknown",position="append")
+        open(145,file="erre_xmol",status="unknown",position="append")
         write(143,*) n_part
         write(143,*) 
+        write(145,*) n_part
+        write(145,*) 
         do j=1,n_part
             write(143,'(A)',advance='no') 'Type'
-        do i=1,3
-            write(143,203,advance='no') f_old(i,j)-f_new(i,j)!'(ES12.4)' 
-        end do
-        write(143,*) 
+            write(145,'(A)',advance='no') 'Type'
+            do i=1,3
+                write(143,203,advance='no') f_old(i,j)-f_new(i,j)!'(ES12.4)' 
+                write(145,203,advance='no') r0(i,j)!'(ES12.4)' 
+            end do
+            write(143,*) 
+            write(145,*) 
         end do
         close(143)
+        close(145)
         !---- DEBUG --->
 
 

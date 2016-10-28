@@ -77,7 +77,22 @@ subroutine spring_array(mode)
                         ineigh= Mindex(i,j+nj)+ bead_site +l*n_mon*n_chain/2
 
                         pot_fue=func_pot_fue(k_spr_x)
-                        
+                        !!
+                        r_neigh = r0(:, ineigh) - r0(:, ir0) 
+                        r_graft = r0(:, igraft) - r0(:, ineigh-bead_site) 
+                        r_graft(1) = r_graft(1) - boundary(1)*INT(2.*r_graft(1)*inv_boundary(1))
+                        r_graft(2) = r_graft(2) - boundary(2)*INT(2.*r_graft(2)*inv_boundary(2))
+                        r_neigh(1) = r_neigh(1) - boundary(1)*INT(2.*r_neigh(1)*inv_boundary(1))
+                        r_neigh(2) = r_neigh(2) - boundary(2)*INT(2.*r_neigh(2)*inv_boundary(2))
+
+                        !print *, NORM2(r_neigh) - NORM2(r_graft)
+
+
+                        !!
+
+                        print *, '#', NORM2(r_graft), igraft
+                        !print *, '!',r_neigh
+
                         f_array(:, ir0) = f_array(:, ir0) + pot_fue(1:3)
                         v_array = v_array + pot_fue(0)
 !print *, pot_fue(1:3),'--++'
@@ -87,6 +102,14 @@ subroutine spring_array(mode)
                         ineigh= Mindex(i+ni,j)+ bead_site +l*n_mon*n_chain/2
 
                         pot_fue=func_pot_fue(k_spr_y)
+                        !!
+                        r_neigh = r0(:, ineigh) - r0(:, ir0) 
+                        r_graft = r0(:, igraft) - r0(:, ineigh-bead_site) 
+                        r_graft(1) = r_graft(1) - boundary(1)*INT(2.*r_graft(1)*inv_boundary(1))
+                        r_graft(2) = r_graft(2) - boundary(2)*INT(2.*r_graft(2)*inv_boundary(2))
+                        r_neigh(1) = r_neigh(1) - boundary(1)*INT(2.*r_neigh(1)*inv_boundary(1))
+                        r_neigh(2) = r_neigh(2) - boundary(2)*INT(2.*r_neigh(2)*inv_boundary(2))
+                        !!
                         
                         f_array(:, ir0) = f_array(:, ir0) + pot_fue(1:3)
                         v_array = v_array + pot_fue(0)
