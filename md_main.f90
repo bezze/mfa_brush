@@ -222,26 +222,19 @@ f_new=force!(:,2+(n_chain-1)*n_mon)
         if(mod(i_time,n_safe).eq.0) then
             call store_config(2)  ! writes out conf_xmol and conf_new
 
-        !<--- DEBUG ----
-        open(143,file="force_xmol",status="unknown",position="append")
-        open(145,file="erre_xmol",status="unknown",position="append")
-        write(143,*) n_part
-        write(143,*) 
-        write(145,*) n_part
-        write(145,*) 
-        do j=1,n_part
-            write(143,'(A)',advance='no') 'Type'
-            write(145,'(A)',advance='no') 'Type'
-            do i=1,3
-                write(143,203,advance='no') f_old(i,j)-f_new(i,j)!'(ES12.4)' 
-                write(145,203,advance='no') r0(i,j)!'(ES12.4)' 
-            end do
-            write(143,*) 
-            write(145,*) 
-        end do
-        close(143)
-        close(145)
-        !---- DEBUG --->
+        !!<--- DEBUG ----
+        !open(143,file="force_xmol",status="unknown",position="append")
+        !write(143,*) n_part
+        !write(143,*) 
+        !do j=1,n_part
+        !    write(143,'(A)',advance='no') 'Type'
+        !    do i=1,3
+        !        write(143,203,advance='no') f_old(i,j)-f_new(i,j)!'(ES12.4)' 
+        !    end do
+        !    write(143,*) 
+        !end do
+        !close(143)
+        !!---- DEBUG --->
 
 
 #if STORE == 0
@@ -249,23 +242,7 @@ f_new=force!(:,2+(n_chain-1)*n_mon)
 #elif STORE == 1
             call store_config(4)  ! Writes out film_xmol and vel.dat UNFOLDED
 #endif
-
-
-        write(56,'(I12.4)', advance='no') i_time
-#ifdef ACTIVE_BRUSH
-        write(56,'(ES12.4)', advance='no') cos_mem(n_chain)
-        write(56,'(ES12.4)', advance='no') k0(1+(n_chain-1)*(n_mon-1))
-#else
-        r_rel = r0(:, 2+(n_chain-1)*n_mon)- r0(:, 1+(n_chain-1)*n_mon)  
-        cos_th = r_rel(1)/SQRT(DOT_PRODUCT(r_rel,r_rel))
-        write(56,'(ES12.4)', advance='no') cos_th
-        write(56,'(ES12.4)', advance='no') k_bend  ! Writing useless column for script compatibility
-#endif
-       ! do i=1,3
-       !     write(56,'(ES12.4)', advance='no') f_old(i)-f_new(i)        
-       ! end do
-        write(56,'(ES12.4)', advance='no') pot
-        write(56,*)
+            call synchro_obser(2)
 
         end if
 

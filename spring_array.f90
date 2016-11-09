@@ -63,6 +63,7 @@ subroutine spring_array(mode)
         do l=0,rows+1
             print *, Mindex(l,:)
         end do
+        print *, " * Lattice parameter", sqrt( 2 * boundary(1) * boundary(2) / n_chain )
 
     case(1)
         f_array=0.d0
@@ -80,9 +81,17 @@ subroutine spring_array(mode)
                         !!
                         r_neigh = r0(:, ineigh) - r0(:, ir0) 
                         r_graft = r0(:, igraft) - r0(:, ineigh-bead_site) 
+
+                        !print *, 'A',' x', r_graft(1), boundary(1)*INT(2.*r_graft(1)*inv_boundary(1))
                         r_graft(1) = r_graft(1) - boundary(1)*INT(2.*r_graft(1)*inv_boundary(1))
+                        !print *, 'D',' x', r_graft(1)
+                        !print *, 'A',' y', r_graft(2), boundary(2)*INT(2.*r_graft(2)*inv_boundary(2))
                         r_graft(2) = r_graft(2) - boundary(2)*INT(2.*r_graft(2)*inv_boundary(2))
+                        !print *, 'D',' y', r_graft(2)
+                        
+                        !print *, 'A',' x', r_neigh(1), boundary(1)*INT(2.*r_neigh(1)*inv_boundary(1))
                         r_neigh(1) = r_neigh(1) - boundary(1)*INT(2.*r_neigh(1)*inv_boundary(1))
+                        !print *, 'D',' x', r_neigh(1)
                         r_neigh(2) = r_neigh(2) - boundary(2)*INT(2.*r_neigh(2)*inv_boundary(2))
 
                         !print *, NORM2(r_neigh) - NORM2(r_graft)
@@ -90,7 +99,7 @@ subroutine spring_array(mode)
 
                         !!
 
-                        print *, '#', NORM2(r_graft), igraft
+                        !print *, '#', NORM2(r_neigh), igraft
                         !print *, '!',r_neigh
 
                         f_array(:, ir0) = f_array(:, ir0) + pot_fue(1:3)
@@ -110,9 +119,11 @@ subroutine spring_array(mode)
                         r_neigh(1) = r_neigh(1) - boundary(1)*INT(2.*r_neigh(1)*inv_boundary(1))
                         r_neigh(2) = r_neigh(2) - boundary(2)*INT(2.*r_neigh(2)*inv_boundary(2))
                         !!
+                        !print *, '#', NORM2(r_graft), igraft
                         
                         f_array(:, ir0) = f_array(:, ir0) + pot_fue(1:3)
                         v_array = v_array + pot_fue(0)
+
 !print *, pot_fue(1:3),'--++'
                     end do !ni
 !print *, f_array,'---+'
