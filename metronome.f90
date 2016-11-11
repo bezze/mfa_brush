@@ -137,7 +137,7 @@ end do !end l
 hard = 1.
 
 do l = 1, n_chain
-    r_2rel = r0(:, 2+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
+    r_2rel = r0(:, 5+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
     cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
     !k_old = k0(1+(l-1)*(n_mon-1))  ! storing old k
 
