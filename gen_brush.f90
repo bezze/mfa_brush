@@ -522,6 +522,8 @@ case(7)  ! ------ Ordered Brush in bottom and top wall, starting with initial or
     a_br = sqrt( 2 * boundary(1) * boundary(2) / n_chain ) !lattice parameter
     a_br_2 = a_br / 2
 
+    print*, "  * Lattice parameter a_br = ", a_br
+
 !Check parameter compatibility for ordered brush
     n_col = nint(boundary(1)/a_br)
     if(mod(boundary(1),a_br).ne.0.) then 

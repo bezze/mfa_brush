@@ -130,14 +130,24 @@ do l = 1, n_chain
         !curv(l) = curv(l) + .5*S/sine
         !curv(l) = curv(l) + 2.*sine/S !+.5*S/sine
     end do ! end i
-    curv(l) = curv(l) + 1/kappa!kappa!1/kappa
+    curv(l) = curv(l) + 1/kappa !kappa!1/kappa
 end do !end l
 
 !print *, cos_lim1, cos_lim2
 hard = 1.
 
 do l = 1, n_chain
-    r_2rel = r0(:, 5+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
+    !!!
+    !!! n_mon+(l-1)*n_mon is the last bead of chain l.
+    !!! We are triggering the active force using this bead.
+    !!! It is the most "non-arbitrary" way of setting this
+    !!! condition. We could use other beads, but they would 
+    !!! excite higher modes of the chain. In this work we 
+    !!! need the lowest frequency possible, so we picked 
+    !!! the last one. Further study of this modes excitation
+    !!! is needed.
+    !!! 
+    r_2rel = r0(:, n_mon+(l-1)*n_mon)- r0(:, 1+(l-1)*n_mon)  
     cos_th = r_2rel(1)/SQRT(DOT_PRODUCT(r_2rel,r_2rel))
     !k_old = k0(1+(l-1)*(n_mon-1))  ! storing old k
 
