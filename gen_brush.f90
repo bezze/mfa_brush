@@ -6,6 +6,9 @@
       integer :: err_ov, i_ov, j_chain,ini_chain,i_col,i_row, n_col,n_row!, j_part!Add by Kevo to avoid overlap between grafting points
       real :: dis_ov_2, min_dis_2, a_br,a_br_2!sigma(1,1)**2 !Add by Kevo to avoid overlap between grafting points
       real (kind=8) :: fi=0., alpha_ini=.52 !0.78
+      real (kind=8) :: xi_ini=0.2, xi_end=2.9, rangle
+      !  11º -> 0.2
+      ! 166º -> 2.9
 !a_br = lattice parameter for brush grafting points
       min_dis_2 = sigma(1,1)**2 ! Sets overlap radius 
 !---  Specify position of first monomer in chain
@@ -517,7 +520,7 @@ case(7)  ! ------ Ordered Brush in bottom and top wall, starting with initial or
 ! defined by 'alpha_ini' (angle between two consecutive beads and the top/bot wall) and
 ! 'fi' (angle between the projection of two consecutive beads over top/bot wall and the x axis)
 
-!print*, "entro" !DEBUG
+print*, "entro" !DEBUG
 
     a_br = sqrt( 2 * boundary(1) * boundary(2) / n_chain ) !lattice parameter
     a_br_2 = a_br / 2
@@ -561,14 +564,21 @@ do j_chain = 0, 1 !0 is top wall. 1 is for bottom wall
             end if
 !            print*,i_part,r0(:,i_part) ! DEBUG
             !Set the remaining monomers in chain
+#           ifdef RANGLE
+            rangle= (xi_end-xi_ini)*uni() + xi_ini
+#           else
+            rangle=alpha_ini
+#           endif
             do i_mon=2,n_mon
                 i_part = i_part + 1
                 do i_dim=1,3
                     if(i_dim.lt.n_dim) then    !x and y                
                         if(i_dim.eq.1) then    ! x
-                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*COS(fi)*COS(alpha_ini)  !bottom
+                                !r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*COS(fi)*COS(alpha_ini)  !bottom
+                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*COS(fi)*COS(rangle)  !bottom
                         else                   ! y 
-                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(fi)*COS(alpha_ini) !bottom
+                                !r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(fi)*COS(alpha_ini) !bottom
+                                r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(fi)*COS(rangle) !bottom
                         end if
                         ! PBC in the plane          
                         if(r0(i_dim,i_part).ge.boundary(i_dim)) then
@@ -582,16 +592,20 @@ do j_chain = 0, 1 !0 is top wall. 1 is for bottom wall
                          if(i_part.le.n_mon*n_chain/2) then  ! top wall
                          !print*,"TOP WALL" !DEBUG
 #            if SOLVENT == 1 || SOLVENT == 2 
-                             r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(alpha_ini)
+                             !r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(alpha_ini)
+                             r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(rangle)
 #            elif SOLVENT == 0 || SOLVENT == 3
-                             r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(alpha_ini)
+                             !r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(alpha_ini)
+                             r0(i_dim,i_part) = r0(i_dim,i_part-1) - 0.96*SIN(rangle)
 #           endif       
                          else if (i_part.gt.n_mon*n_chain/2) then !bottom wall    
                         !print*, "BOTTOM WALL" !DEBUG
 #            if SOLVENT == 1 || SOLVENT == 2 
-                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+                            !r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(rangle)
 #            elif SOLVENT == 0 || SOLVENT == 3
-                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+                            !r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(alpha_ini)
+                            r0(i_dim,i_part) = r0(i_dim,i_part-1) + 0.96*SIN(rangle)
 #           endif                
                          end if  ! end top or bottom 
                     end if ! end x,y or z
