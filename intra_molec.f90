@@ -4,6 +4,9 @@
       implicit none
       logical :: debug=.false.
       integer:: i,j
+! Used to calculate 
+      real (kind=8) :: l_0=0.8d0
+      real (kind=8) :: r_vers(3)
       
 ! v_intra_molec = total intramolecular energy. ie brush + melt/droplet
 ! v_intra_molec_d = intramolecular energy of  melt/droplet
@@ -34,6 +37,10 @@
                 r_2 = r_2 + delta_r(i_dim)* delta_r(i_dim)
             end do
 
+#ifdef FENE_l0
+            r_vers(:) = delta_r/sqrt(r_2)
+#endif
+
 !   -----  check whether interaction takes place
 
 #ifndef NO_WARNS
@@ -44,6 +51,10 @@
             pot_loc = -0.5*log(1.-r_dummy)
             v_intra_molec = v_intra_molec + pot_loc
             r_dummy = k_chain/(1.-r_dummy)*inv_r_chain_2
+
+#ifdef FENE_l0
+            delta_r(:) = delta_r(:) - l_0*r_vers(:)
+#endif     
 
             do i_dim = 1,n_dim
                 force_loc(i_dim) = r_dummy*delta_r(i_dim)

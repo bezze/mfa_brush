@@ -102,6 +102,11 @@ subroutine messages
 #ifdef PROFILES 
 print '(/a/)',"  * Doing simulation with profiles calculation (slower) "
 #endif
+
+#ifdef FENE_l0
+    print '(a)',"  * Enforcing minimum distance in FENE interactions"
+#endif
+
 #if THERMOSTAT == 0
       print '(/a)',"  * Using DPD thermostat. "
 
@@ -113,6 +118,7 @@ print '(/a/)',"  * Doing simulation with profiles calculation (slower) "
 #   else      
       print '(/a/ )',"  * Using DPD cutoff coincides with potentials cut-offs" 
 #   endif      
+
 ! ---- Different weight functions      
 
 #   if DPD_WEIGHT == 0 
