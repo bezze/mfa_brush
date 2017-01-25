@@ -13,9 +13,9 @@
  * 0: randomly distributed with a uniform distribution. Beads may overlap one another.
  * 1: randomly distributed with a uniform distribution. Overlaping beads are forbidden.
  * 2: ordered brush. The distance between neighbouring grafted beads is equal for all points
- * 3: */
+ * 3: ordered brush, starts aligned in one direction, i.e. 'combed'*/
 
-#define BRUSH_TYPE 0 
+#define BRUSH_TYPE 3 
 
 /* SYMMETRY */
 /* 0 = channel geometry: no PBC in Z; 
@@ -48,9 +48,9 @@
 
 #undef HYDROPHOBIA  /* if def, the interaction between brush and melt is purely repulsive *//
 #undef BRUSH_IN_GOOD_SV /*if def the interaction between grafted polimers is purely repulsive*/
-#undef BENDING  /* if def the grafted polymers are assumed to be semiflxible: bending potential *//
+#define BENDING  /* if def the grafted polymers are assumed to be semiflxible: bending potential *//
 #undef BENDING_MELT  /* if def the melt polymers are assumed to be semiflxible: bending potential *//
-#undef ORIENTATION  /* if def the grafted polymers will be oriented through an harmonic potential*//
+#define ORIENTATION  /* if def the grafted polymers will be oriented through an harmonic potential*//
 
 #undef PARTICLE_4 /* If defined the program runs with four different particle type */
 
@@ -60,10 +60,17 @@
 
 #define ACTIVE_BRUSH
 
+/*  Polymer chains start with a random angle*/
+
+#define RANGLE
+
+/* Brushes are coupled by springs */
+
+#undef SPRING_ARRAY
 
 /* Thermostat */
 
-#define THERMOSTAT 0 /*  1=LGV 0=DPD       */
+#define THERMOSTAT 1 /*  1=LGV 0=DPD       */
 
 #define DPD_WEIGHT 0 /*  0=usual choice of DPD weight: Wd=(1-r/rc)^2 ; 1= constant: Wr=Wd=1 ; 2 "quartic" */ 
                      /*  wd=(1-r/rc)^4                                                                    */  
